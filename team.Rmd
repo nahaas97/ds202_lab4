@@ -19,12 +19,14 @@ str(bio)
 Cleaning the data
 ```{r}
 library(dplyr)
+#1.
 defense$Name = factor(defense$Name)
 offense$Name = factor(offense$Name)
 bio$Name = factor(bio$Name)
 offense$Opponent_Opponent = factor(offense$Opponent_Opponent)
 defense$Opponent_Opponent = factor(defense$Opponent_Opponent)
 
+#2.
 defense$Tackles_Solo = as.numeric(defense$Tackles_Solo)
 defense$Tackles_ASST = as.numeric(defense$Tackles_ASST)
 defense$Tackles_TFL = as.numeric(defense$Tackles_TFL)
@@ -49,6 +51,7 @@ offense$Passing_INT = as.numeric(offense$Passing_INT)
 bio$Weight = as.numeric(bio$Weight)
 
 library(tidyr)
+#3.
 bio = separate(bio, col="Height", into= c("Height_in_feet","Remaining_height_inches"),sep="-")
 bio$Height_in_feet = as.numeric(bio$Height_in_feet)
 bio$Remaining_height_inches = as.numeric(bio$Remaining_height_inches)
@@ -58,6 +61,7 @@ bio$Height_in_feet = NULL
 bio$Remaining_height_inches = NULL
 head(bio)
 
+#4.
 defClean = defense
 str(defClean)
 offClean = offense
@@ -67,11 +71,13 @@ str(bioClean)
 ```
 
 
-Tidying the Data
+Tidying the Data (A)
 ```{r}
-
+#1.
 defClean = gather(defClean, key=Statistic, value=Count, 3:11)
 library(ggplot2)
+
+#2.
 ggplot(defClean, aes(x=Count)) + geom_histogram(binwidth = 1) + facet_wrap(~Statistic) + labs(title="Count per defensive statistic", x="Number per player", y="Count")
 
 ```
@@ -80,6 +86,7 @@ The rarest defensive skills are interceptions (Turnover_INT) and fumble recoveri
 
 
 ```{r}
+#3.
 library(ggplot2)
 betterdefense = filter(defClean, Statistic=="Tackles_Solo") %>%
 spread(key= Opponent_Opponent, value = Count)
@@ -92,10 +99,41 @@ According to the graph above, we can see that we had more solo tackles against W
 Tidying (part B)
 
 ```{r}
+#1.
 bioClean = separate(bioClean, col="Hometown", into= c("City","State"),sep=",")
-print(bioClean$City[5] & bioClean$State[5])
+head(bioClean$City)
+head(bioClean$State)
 
+#2.
 table(bioClean$State)
-
 ```
+
+Joining Data Frames
+
+1. 
+```{r}
+offensive_bio = left_join(offClean, bioClean, by= "Name")
+head(offensive_bio)
+
+table(unique(offensive_bio$City))
+table(offensive_bio$Name)
+```
+
+2.
+```{r}
+full_offensive_bio = full_join(offClean, bioClean, by= "Name")
+
+ggplot(full_offensive_bio, aes(Weight, Receiving_YDS)) + geom_point() + labs(title="Number of Receiving Yards by Weight", x="Weight (lbs)",y="Receiving Yards")
+```
+
+Between the weights of 175 lbs - 225 lbs., the number of receiving yards typically decreases as the weight of a player increases. There is an abnormality at the weight of 225, then the trend decreases again, generally.
+
+
+3.
+Is there a trend between the height of a player and the number of receptions?
+```{r}
+ggplot(full_offensive_bio, aes(Height_in_inches, Receiving_REC)) + geom_point(alpha=1/5) + labs(title="Number of Receptions by Height", x="Height (in)", y="Number of Receptions")
+```
+
+From the data we have gathered, there appears to be no general trend between height and the number of receptions. This may be because there are star players on the team at set heights, and there are a limited number of players in the dataset.
 
