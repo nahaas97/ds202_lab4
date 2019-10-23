@@ -5,3 +5,97 @@ date: "10/17/2019"
 output: html_document
 ---
 
+
+```{r}
+library(readxl)
+defense <- read_excel('cyclonesFootball2018.xlsx', sheet='Defensive')
+str(defense)
+offense <- read_excel('cyclonesFootball2018.xlsx', sheet='Offensive')
+str(offense)
+bio <- read_excel('cyclonesFootball2018.xlsx', sheet='Biography')
+str(bio)
+
+```
+Cleaning the data
+```{r}
+library(dplyr)
+defense$Name = factor(defense$Name)
+offense$Name = factor(offense$Name)
+bio$Name = factor(bio$Name)
+offense$Opponent_Opponent = factor(offense$Opponent_Opponent)
+defense$Opponent_Opponent = factor(defense$Opponent_Opponent)
+
+defense$Tackles_Solo = as.numeric(defense$Tackles_Solo)
+defense$Tackles_ASST = as.numeric(defense$Tackles_ASST)
+defense$Tackles_TFL = as.numeric(defense$Tackles_TFL)
+defense$Tackles_Sack = as.numeric(defense$Tackles_Sack)
+defense$Turnover_FF = as.numeric(defense$Turnover_FF)
+defense$Turnover_FR = as.numeric(defense$Turnover_FR)
+defense$Turnover_INT = as.numeric(defense$Turnover_INT)
+defense$Pass_QBH = as.numeric(defense$Pass_QBH)
+defense$Pass_PB = as.numeric(defense$Pass_PB)
+
+offense$Receiving_REC = as.numeric(offense$Receiving_REC)
+offense$Receiving_YDS = as.numeric(offense$Receiving_YDS)
+offense$Receiving_TD = as.numeric(offense$Receiving_TD)
+offense$Rushing_ATT = as.numeric(offense$Rushing_ATT)
+offense$Rushing_YDS = as.numeric(offense$Rushing_YDS)
+offense$Rushing_TD = as.numeric(offense$Rushing_TD)
+offense$`Passing_CMP-ATT` = as.numeric(offense$`Passing_CMP-ATT`)
+offense$Passing_YDS = as.numeric(offense$Passing_YDS)
+offense$Passing_TD = as.numeric(offense$Passing_TD)
+offense$Passing_INT = as.numeric(offense$Passing_INT)
+
+bio$Weight = as.numeric(bio$Weight)
+
+library(tidyr)
+bio = separate(bio, col="Height", into= c("Height_in_feet","Remaining_height_inches"),sep="-")
+bio$Height_in_feet = as.numeric(bio$Height_in_feet)
+bio$Remaining_height_inches = as.numeric(bio$Remaining_height_inches)
+bio$Height_in_feet = bio$Height_in_feet * 12
+bio$Height_in_inches = bio$Height_in_feet + bio$Remaining_height_inches
+bio$Height_in_feet = NULL
+bio$Remaining_height_inches = NULL
+head(bio)
+
+defClean = defense
+str(defClean)
+offClean = offense
+str(offClean)
+bioClean = bio
+str(bioClean)
+```
+
+
+Tidying the Data
+```{r}
+
+defClean = gather(defClean, key=Statistic, value=Count, 3:11)
+library(ggplot2)
+ggplot(defClean, aes(x=Count)) + geom_histogram(binwidth = 1) + facet_wrap(~Statistic) + labs(title="Count per defensive statistic", x="Number per player", y="Count")
+
+```
+
+The rarest defensive skills are interceptions (Turnover_INT) and fumble recoveries (Turnover_FR). While most of the skills are relatively rare, the two above are the rarest.
+
+
+```{r}
+library(ggplot2)
+betterdefense = filter(defClean, Statistic=="Tackles_Solo") %>%
+spread(key= Opponent_Opponent, value = Count)
+ggplot(betterdefense, aes(x=`Kansas State`, y=`West Virginia`)) + geom_point() + labs(title = "Solo tackles against Kansas State and West Virginia", x="Solo Tackles against Kansas State", y="Solo Tackles against West Virginia")
+
+```
+
+According to the graph above, we can see that we had more solo tackles against West Virginia, meaning that we had a better defense against them compared to Kansas State.
+
+Tidying (part B)
+
+```{r}
+bioClean = separate(bioClean, col="Hometown", into= c("City","State"),sep=",")
+print(bioClean$City[5] & bioClean$State[5])
+
+table(bioClean$State)
+
+```
+
