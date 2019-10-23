@@ -5,6 +5,9 @@ date: "10/17/2019"
 output: html_document
 ---
 
+Owner Github username: nahaas97
+Parter Github username: abeagle15
+Repo: https://github.com/nahaas97/ds202_lab4
 
 ```{r}
 library(readxl)
