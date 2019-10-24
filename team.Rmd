@@ -17,7 +17,6 @@ offense <- read_excel('cyclonesFootball2018.xlsx', sheet='Offensive')
 str(offense)
 bio <- read_excel('cyclonesFootball2018.xlsx', sheet='Biography')
 str(bio)
-
 ```
 Cleaning the data
 ```{r}
@@ -118,16 +117,15 @@ Joining Data Frames
 offensive_bio = left_join(offClean, bioClean, by= "Name")
 head(offensive_bio)
 
-table(unique(offensive_bio$City))
-table(offensive_bio$Name)
+offensive_bio%>% group_by(City,Name) %>% select(City,Name) %>% count()
 ```
-
 2.
 ```{r}
 full_offensive_bio = full_join(offClean, bioClean, by= "Name")
 
 ggplot(full_offensive_bio, aes(Weight, Receiving_YDS)) + geom_point() + labs(title="Number of Receiving Yards by Weight", x="Weight (lbs)",y="Receiving Yards")
 ```
+
 
 Between the weights of 175 lbs - 225 lbs., the number of receiving yards typically decreases as the weight of a player increases. There is an abnormality at the weight of 225, then the trend decreases again, generally.
 
