@@ -6,7 +6,9 @@ output: html_document
 ---
 
 Owner Github username: nahaas97
+
 Parter Github username: abeagle15
+
 Repo: https://github.com/nahaas97/ds202_lab4
 
 ```{r}
@@ -18,6 +20,9 @@ str(offense)
 bio <- read_excel('cyclonesFootball2018.xlsx', sheet='Biography')
 str(bio)
 ```
+
+
+
 Cleaning the data
 ```{r}
 library(dplyr)
@@ -73,6 +78,10 @@ str(bioClean)
 ```
 
 
+
+
+
+
 Tidying the Data (A)
 ```{r}
 #1.
@@ -87,6 +96,8 @@ ggplot(defClean, aes(x=Count)) + geom_histogram(binwidth = 1) + facet_wrap(~Stat
 The rarest defensive skills are interceptions (Turnover_INT) and fumble recoveries (Turnover_FR). While most of the skills are relatively rare, the two above are the rarest.
 
 
+
+
 ```{r}
 #3.
 library(ggplot2)
@@ -97,6 +108,11 @@ ggplot(betterdefense, aes(x=`Kansas State`, y=`West Virginia`)) + geom_point() +
 ```
 
 According to the graph above, we can see that we had more solo tackles against West Virginia, meaning that we had a better defense against them compared to Kansas State.
+
+
+
+
+
 
 Tidying (part B)
 
@@ -109,6 +125,12 @@ head(bioClean$State)
 #2.
 table(bioClean$State)
 ```
+
+
+
+
+
+
 
 Joining Data Frames
 
@@ -128,6 +150,10 @@ ggplot(full_offensive_bio, aes(Weight, Receiving_YDS)) + geom_point() + labs(tit
 
 
 Between the weights of 175 lbs - 225 lbs., the number of receiving yards typically decreases as the weight of a player increases. There is an abnormality at the weight of 225, then the trend decreases again, generally.
+
+
+
+
 
 
 3.
